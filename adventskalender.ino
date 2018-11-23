@@ -186,7 +186,7 @@ int getNewYearTrack()
         (minute(actualTime) == 0 || minute(actualTime) == 15 || minute(actualTime) == 30)) // only at this minutes its possible new year
     {
         int arraySize = sizeof(newYearTrackList) / sizeof(newYearTrackList[0]);
-        for (int i = 0; i <= arraySize; i++)
+        for (int i = 0; i < arraySize; i++)
         {
             // return newYearTrackList[i].Track;
             return NEWYEAR_TRACKS_START + i;
