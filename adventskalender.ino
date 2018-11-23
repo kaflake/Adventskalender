@@ -21,59 +21,9 @@
 #include <DFMiniMp3.h>      // https://github.com/Makuna/DFMiniMp3
 #include <SoftwareSerial.h>
 
-#include "config.h"
-
-// implement a notification class,
-// its member methods will get called 
-//
-class Mp3Notify
-{
-public:
-  static void OnError(uint16_t errorCode)
-  {
-    // see DfMp3_Error for code meaning
-    Serial.println();
-    Serial.print("Com Error ");
-    Serial.println(errorCode);
-  }
-
-  static void OnPlayFinished(uint16_t globalTrack)
-  {
-    Serial.println();
-    Serial.print("Play finished for #");
-    Serial.println(globalTrack);   
-  }
-
-  static void OnCardOnline(uint16_t code)
-  {
-    Serial.println();
-    Serial.print("Card online ");
-    Serial.println(code);     
-  }
-
-  static void OnCardInserted(uint16_t code)
-  {
-    Serial.println();
-    Serial.print("Card inserted ");
-    Serial.println(code); 
-  }
-
-  static void OnCardRemoved(uint16_t code)
-  {
-    Serial.println();
-    Serial.print("Card removed ");
-    Serial.println(code);  
-  }
-};
-
-struct NewYearTrack 
-{
-    // hour and minute and day in germany
-    byte Day;
-    byte Hour;
-    byte Minute;
-    byte Track; // music track to play
-}
+#include "General.h"
+#include "Config.h"
+#include "Mp3Notify.h"
 
 SoftwareSerial mp3SoftwareSerial(MP3_SERIAL_RX, MP3_SERIAL_TX);
 static DFMiniMp3<SoftwareSerial, Mp3Notify> mp3(mp3SoftwareSerial);

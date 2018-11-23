@@ -1,6 +1,8 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#include "Arduino.h"
+
 #define def_printTemperature // print temperature on time output
 #define def_printTime // print time while on loop
 #define def_testLed
@@ -20,6 +22,15 @@
 #define NEWYEAR_TRACKS_START 29
 
 const unsigned long DOOR_REACTION_TIME(500); // ms die der schalte braucht bis er die tür als geschlossen oder offen definiert
+
+struct NewYearTrack 
+{
+    // hour and minute and day in germany
+    byte Day;
+    byte Hour;
+    byte Minute;
+    byte Track; // music track to play
+}
 
 NewYearTrack newYearTrackList[] = 
 {
