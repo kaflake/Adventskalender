@@ -10,7 +10,7 @@
 
 #define MP3_SERIAL_RX 3
 #define MP3_SERIAL_TX 2
-#define MP3_BUSY 4
+#define MP3_BUSY_PIN 4
 
 #define CONTROL_BUTTON_PIN A0
 #define CHRISTMAS_BUTTON_PIN 4

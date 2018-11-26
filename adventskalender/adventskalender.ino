@@ -62,6 +62,8 @@ void initIos()
     controlButton.begin();
     christmasButton.begin();
 
+     pinMode(MP3_BUSY_PIN, INPUT);
+
     #ifdef def_testLed
         pinMode(LED_BUILTIN, OUTPUT);
     #endif
@@ -220,13 +222,6 @@ void setLastClockTime()
     lastClockTime = actualTime;
 }
 
-void playMp3Track(int track) 
-{
-    // TODO auch testen ob schon gespielt wird, dann ignoriere das
-    Serial << 'Play MP3Track ' << track << endl;
-    mp3.playMp3FolderTrack(track);
-}
-
 void activateKuckucksuhrLed() 
 {
     // activate segment 2 mit christmas
@@ -242,9 +237,30 @@ void deactivateClockAndNewYearsLedAfterAMinute()
 
 void playAdvertisementTrack(int track) 
 {
+    if(isPlaying())
+    {
+        Serial << 'Play AdvertismentTrack ' << track << endl;
+        mp3.playAdvertisement(track);
+    }
+    else
+    {
+        Serial << 'Is not playing -> No Advertisment needed' << endl;
+        playMp3Track(track);
+    }
+}
+
+void playMp3Track(int track) 
+{
     // TODO auch testen ob schon gespielt wird, dann ignoriere das
-    Serial << 'Play AdvertismentTrack ' << track << endl;
-    mp3.playAdvertisement(track);
+    Serial << 'Play MP3Track ' << track << endl;
+    mp3.playMp3FolderTrack(track);
+}
+
+bool isPlaying() 
+{
+    // kann etwas dauern bis busy erscheint, deshalb davor ein delay
+    delay(500);
+    return !digitalRead(MP3_BUSY_PIN);
 }
 
 void setRtcFromSerialLoop()
