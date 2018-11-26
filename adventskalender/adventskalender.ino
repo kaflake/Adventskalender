@@ -20,6 +20,7 @@
 #include <JC_Button.h>      // https://github.com/JChristensen/JC_Button
 #include <DFMiniMp3.h>      // https://github.com/Makuna/DFMiniMp3
 #include <SoftwareSerial.h>
+#include <WS2812FX.h>
 
 #include "general.h"
 #include "config.h"
@@ -27,17 +28,21 @@
 
 SoftwareSerial mp3SoftwareSerial(MP3_SERIAL_RX, MP3_SERIAL_TX);
 static DFMiniMp3<SoftwareSerial, Mp3Notify> mp3(mp3SoftwareSerial);
+WS2812FX ws2812fx = WS2812FX(LED_STRIPE_COUNT, LED_STRIPE_PIN, NEO_GRB + NEO_KHZ800);
 Button controlButton(CONTROL_BUTTON_PIN);
 Button christmasButton(CHRISTMAS_BUTTON_PIN);
 
 static time_t actualTime;
 static time_t lastClockTime;
+static bool clockLedActive = true;
 
 void setup()
 {
     Serial.begin(115200);
     initRtc();
     initIos();
+    initMp3();
+    initLedStrip();
 }
 
 void initRtc() 
@@ -67,6 +72,11 @@ void initIos()
     #ifdef def_testLed
         pinMode(LED_BUILTIN, OUTPUT);
     #endif
+}
+
+void initLedStrip()
+{
+    ws2812fx.init();
 }
 
 void loop()
@@ -123,7 +133,8 @@ void playTrackOfTheDay()
     {
         int dayTrackIndex = actualDay - 1;
         playMp3Track(dayTrackIndex + DAY_TRACK_START);
-    } else 
+    } 
+    else 
     {
         playMp3Track(OHTANNENBAUM_TRACK);
     }
@@ -166,12 +177,23 @@ void playChristmasTrack()
 
 void activateChristmasLed()
 {
-    // TODO WS2812FX segement 1, auf fireflicker
+    // ws2812fx.setBrightness(255);
+    // parameters: index, start, stop, mode, color, speed, reverse
+    ws2812fx.setSegment(LED_STRIPE_TREE_SEGMENT,  
+    LED_STRIPE_CHRISTMAS_SEGMENT_START, 
+    LED_STRIPE_CHRISTMAS_SEGMENT_START + LED_STRIPE_CHRISTMAS_SEGMENT_COUNT - 1, 
+    FX_MODE_FIRE_FLICKER,
+    RED,
+    1000,
+    false);
+
+    ws2812fx.start();
 }
 
 void deactivateChristmasLed()
 {
-    // TODO WS2812FX segment 1 (bzw. alle aus)
+    // alway deactivate all
+    ws2812fx.stop();
 }
 
 void happyNewYearLoop() 
@@ -204,7 +226,18 @@ int getNewYearTrack()
 
 void activateNewYearsLed() 
 {
-    // activate segment 2 mit firework
+    clockLedActive = true;
+    // ws2812fx.setBrightness(255);
+    // parameters: index, start, stop, mode, color, speed, reverse
+    ws2812fx.setSegment(LED_STRIPE_TREE_SEGMENT,  
+    LED_STRIPE_TREE_SEGMENT_START, 
+    LED_STRIPE_TREE_SEGMENT_START + LED_STRIPE_TREE_SEGMENT_COUNT - 1, 
+    FX_MODE_FIREWORKS_RANDOM,
+    RED,
+    1000,
+    false);
+
+    ws2812fx.start();
 }
 
 void kuckucksUhrLoop() 
@@ -214,6 +247,7 @@ void kuckucksUhrLoop()
     {
         setLastClockTime();
         playAdvertisementTrack(CLOCK_TRACK);
+        activateKuckucksuhrLed();        
     }
 }
 
@@ -224,14 +258,29 @@ void setLastClockTime()
 
 void activateKuckucksuhrLed() 
 {
-    // activate segment 2 mit christmas
+    clockLedActive = true;
+    // ws2812fx.setBrightness(255);
+    // parameters: index, start, stop, mode, color, speed, reverse
+    ws2812fx.setSegment(LED_STRIPE_TREE_SEGMENT,  
+    LED_STRIPE_TREE_SEGMENT_START, 
+    LED_STRIPE_TREE_SEGMENT_START + LED_STRIPE_TREE_SEGMENT_COUNT - 1, 
+    FX_MODE_MERRY_CHRISTMAS,
+    RED,
+    1000,
+    false);
+
+    ws2812fx.start();
 }
 
 void deactivateClockAndNewYearsLedAfterAMinute()
 {
-    if(minute(actualTime) != minute(lastClockTime))
+    if(clockLedActive)
     {
-        // deactivate segment 2
+        if(minute(actualTime) != minute(lastClockTime))
+        {
+            ws2812fx.stop();
+            clockLedActive = false;
+        }
     }
 }
 

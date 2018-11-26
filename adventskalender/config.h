@@ -4,9 +4,9 @@
 #include "Arduino.h"
 #include "general.h"
 
-#define def_printTemperature // print temperature on time output
-#define def_printTime // print time while on loop
-#define def_testLed
+//#define def_printTemperature // print temperature on time output
+//#define def_printTime // print time while on loop
+//#define def_testLed
 
 #define MP3_SERIAL_RX 3
 #define MP3_SERIAL_TX 2
@@ -16,6 +16,13 @@
 #define CHRISTMAS_BUTTON_PIN 4
 
 #define LED_STRIPE_PIN 12
+#define LED_STRIPE_COUNT 30
+#define LED_STRIPE_CHRISTMAS_SEGMENT 0
+#define LED_STRIPE_CHRISTMAS_SEGMENT_START 0
+#define LED_STRIPE_CHRISTMAS_SEGMENT_COUNT 6 // das im türchen 24
+#define LED_STRIPE_TREE_SEGMENT 1
+#define LED_STRIPE_TREE_SEGMENT_START 6
+#define LED_STRIPE_TREE_SEGMENT_COUNT 24 // das an der spitze
 // LED_BUILTIN is pin 13 to test
 
 #define DAY_TRACK_START 1 // 24 daytracks needed
@@ -27,7 +34,7 @@
 
 const unsigned long DOOR_REACTION_TIME(500); // ms die der schalte braucht bis er die tür als geschlossen oder offen definiert
 
-NewYearTrack newYearTrackList[] = 
+const NewYearTrack newYearTrackList[] = 
 {
     // https://www.timeanddate.de/countdown/neujahr-zeitzonen
     {31, 11, 0, 29}, // Samoa und Weihnachtsinsel/Kiribati   	Kiritimati, Apia, Salelologa (Savai'i)

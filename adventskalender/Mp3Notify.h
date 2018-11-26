@@ -8,12 +8,11 @@ public:
   static void OnError(uint16_t errorCode) {
     // see DfMp3_Error for code meaning
     Serial.println();
-    Serial.print("Com Error ");
+    Serial.print(F("Com Error "));
     Serial.println(errorCode);
   }
   static void OnPlayFinished(uint16_t track) {
-    Serial.print("Track beendet");
-    Serial.println(track);
+    Serial.print(F("Track beendet"));
   }
   static void OnCardOnline(uint16_t code) {
     Serial.println(F("SD Karte online "));
