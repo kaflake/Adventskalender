@@ -2,6 +2,7 @@
 #define CONFIG_H
 
 #include "Arduino.h"
+#include "general.h"
 
 #define def_printTemperature // print temperature on time output
 #define def_printTime // print time while on loop
@@ -22,15 +23,6 @@
 #define NEWYEAR_TRACKS_START 29
 
 const unsigned long DOOR_REACTION_TIME(500); // ms die der schalte braucht bis er die tür als geschlossen oder offen definiert
-
-struct NewYearTrack 
-{
-    // hour and minute and day in germany
-    byte Day;
-    byte Hour;
-    byte Minute;
-    byte Track; // music track to play
-}
 
 NewYearTrack newYearTrackList[] = 
 {
@@ -73,6 +65,6 @@ NewYearTrack newYearTrackList[] =
     {1, 11, 0, 64}, //	Kleines Gebiet in USA und 2 weitere	Honolulu, Rarotonga, Adak, Papeete
     {1, 12, 0, 65}, //	American Samoa und 2 weitere	Alofi, Midway, Pago Pago
     {1, 13, 0, 66} // Großteil von US Minor Outlying Islands	Bakerinsel, Howlandinsel
-}
+};
 
 #endif

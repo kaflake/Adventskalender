@@ -1,4 +1,4 @@
-class Mp3Notify
+/*class Mp3Notify
 {
 public:
   static void OnError(uint16_t errorCode)
@@ -36,4 +36,4 @@ public:
     Serial.print("Card removed ");
     Serial.println(code);  
   }
-};
+};*/

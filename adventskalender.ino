@@ -21,9 +21,31 @@
 #include <DFMiniMp3.h>      // https://github.com/Makuna/DFMiniMp3
 #include <SoftwareSerial.h>
 
-#include "General.h"
-#include "Config.h"
-#include "Mp3Notify.h"
+#include "general.h"
+#include "config.h"
+//#include "Mp3Notify.h"
+class Mp3Notify {
+public:
+  static void OnError(uint16_t errorCode) {
+    // see DfMp3_Error for code meaning
+    Serial.println();
+    Serial.print("Com Error ");
+    Serial.println(errorCode);
+  }
+  static void OnPlayFinished(uint16_t track) {
+    Serial.print("Track beendet");
+    Serial.println(track);
+  }
+  static void OnCardOnline(uint16_t code) {
+    Serial.println(F("SD Karte online "));
+  }
+  static void OnCardInserted(uint16_t code) {
+    Serial.println(F("SD Karte bereit "));
+  }
+  static void OnCardRemoved(uint16_t code) {
+    Serial.println(F("SD Karte entfernt "));
+  }
+};
 
 SoftwareSerial mp3SoftwareSerial(MP3_SERIAL_RX, MP3_SERIAL_TX);
 static DFMiniMp3<SoftwareSerial, Mp3Notify> mp3(mp3SoftwareSerial);
@@ -114,14 +136,14 @@ void controlButtonLoop()
 
 void playTrackOfTheDay() 
 {
-    int day = day();
-    if(month() == 12 && day <= 24)
+    int actualDay = day();
+    if(month() == 12 && actualDay <= 24)
     {
-        int dayTrackIndex = day - 1;
+        int dayTrackIndex = actualDay - 1;
         playMp3Track(dayTrackIndex + DAY_TRACK_START);
     } else 
     {
-        dayTrack(OHTANNENBAUM_TRACK);
+        playMp3Track(OHTANNENBAUM_TRACK);
     }
 }
 
@@ -215,7 +237,7 @@ void playMp3Track(int track)
 {
     // TODO auch testen ob schon gespielt wird, dann ignoriere das
     Serial << 'Play MP3Track ' << track << endl;
-     p3.playMp3FolderTrack(track);
+    mp3.playMp3FolderTrack(track);
 }
 
 void playAdvertisementTrack(int track) 
@@ -247,7 +269,7 @@ void setRtcFromSerialLoop()
             tm.Hour = Serial.parseInt();
             tm.Minute = Serial.parseInt();
             tm.Second = Serial.parseInt();
-            t = makeTime(tm);
+            time_t t = makeTime(tm);
             RTC.set(t);        // use the time_t value to ensure correct weekday is set
             setTime(t);
             Serial << F("RTC set to: ");
@@ -255,7 +277,7 @@ void setRtcFromSerialLoop()
             Serial << endl;
             // dump any extraneous input
             while (Serial.available() > 0) Serial.read();
-        }
+         }
     }
 }
 
