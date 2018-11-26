@@ -6,22 +6,22 @@
 class Mp3Notify {
 public:
   static void OnError(uint16_t errorCode) {
-    // see DfMp3_Error for code meaning
-    Serial.println();
-    Serial.print(F("Com Error "));
+    // see DfMp3_Error for code meaning    
+    Serial.print("Com Error ");
     Serial.println(errorCode);
   }
   static void OnPlayFinished(uint16_t track) {
-    Serial.print(F("Track beendet"));
+    Serial.print("Track beendet");
+    Serial.println(track);
   }
   static void OnCardOnline(uint16_t code) {
-    Serial.println(F("SD Karte online "));
+    Serial.println("SD Karte online ");
   }
   static void OnCardInserted(uint16_t code) {
-    Serial.println(F("SD Karte bereit "));
+    Serial.println("SD Karte bereit ");
   }
   static void OnCardRemoved(uint16_t code) {
-    Serial.println(F("SD Karte entfernt "));
+    Serial.println("SD Karte entfernt ");
   }
 };
 

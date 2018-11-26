@@ -1,20 +1,3 @@
-// Set the date and time by entering the following on the Arduino
-// serial monitor:
-//  year,month,day,hour,minute,second,
-//
-// Where
-//  year can be two or four digits,
-//  month is 1-12,
-//  day is 1-31,
-//  hour is 0-23, and
-//  minute and second are 0-59.
-//
-// Entering the final comma delimiter (after "second") will avoid a
-// one-second timeout and will allow the RTC to be set more accurately.
-//
-// No validity checking is done, invalid values or incomplete syntax
-// in the input will result in an incorrect RTC setting.
-
 #include <DS3232RTC.h>      // https://github.com/JChristensen/DS3232RTC
 #include <Streaming.h>      // http://arduiniana.org/libraries/streaming/
 #include <JC_Button.h>      // https://github.com/JChristensen/JC_Button
@@ -50,8 +33,8 @@ void initRtc()
     // setSyncProvider() causes the Time library to synchronize with the
     // external RTC by calling RTC.get() every five minutes by default.
     setSyncProvider(RTC.get);
-    Serial << F("RTC Sync");
-    if (timeStatus() != timeSet) Serial << F(" FAIL!");
+    Serial << "RTC Sync";
+    if (timeStatus() != timeSet) Serial << " FAIL!";
     Serial << endl;
 }
 
@@ -67,7 +50,7 @@ void initIos()
     controlButton.begin();
     christmasButton.begin();
 
-     pinMode(MP3_BUSY_PIN, INPUT);
+    pinMode(MP3_BUSY_PIN, INPUT);
 
     #ifdef def_testLed
         pinMode(LED_BUILTIN, OUTPUT);
@@ -77,6 +60,7 @@ void initIos()
 void initLedStrip()
 {
     ws2812fx.init();
+    ws2812fx.setBrightness(255);
 }
 
 void loop()
@@ -85,7 +69,8 @@ void loop()
     mp3.loop(); 
 
     // if serial input set it as time
-    setRtcFromSerialLoop();
+    // für setrtc reicht der speicherplatz nicht mehr. zum setzen der zeit ein extra sketch benutzen (in der DS3232RTC lib in den beispielen vorhanden)
+    // setRtcFromSerialLoop();
 
     #ifdef def_printTime
         printTimeToSerial();
@@ -171,7 +156,7 @@ void playChristmasTrack()
         playMp3Track(CHRISTMAS_TRACK);
     } else {
         playMp3Track(NOTALLOWED_TRACK);
-        Serial << 'Spiele: heut ist aber nicht weihnachten mach das schnell wieder zu' << endl;
+        //Serial << 'Spiele: heut ist aber nicht weihnachten mach das schnell wieder zu' << endl;
     }
 }
 
@@ -288,7 +273,7 @@ void playAdvertisementTrack(int track)
 {
     if(isPlaying())
     {
-        Serial << 'Play AdvertismentTrack ' << track << endl;
+        //Serial << 'Play AdvertismentTrack ' << track << endl;
         mp3.playAdvertisement(track);
     }
     else
@@ -301,7 +286,7 @@ void playAdvertisementTrack(int track)
 void playMp3Track(int track) 
 {
     // TODO auch testen ob schon gespielt wird, dann ignoriere das
-    Serial << 'Play MP3Track ' << track << endl;
+    //Serial << 'Play MP3Track ' << track << endl;
     mp3.playMp3FolderTrack(track);
 }
 
@@ -310,40 +295,6 @@ bool isPlaying()
     // kann etwas dauern bis busy erscheint, deshalb davor ein delay
     delay(500);
     return !digitalRead(MP3_BUSY_PIN);
-}
-
-void setRtcFromSerialLoop()
-{
-    tmElements_t tm;
-    
-    // check for input to set the RTC, minimum length is 12, i.e. yy,m,d,h,m,s
-    if (Serial.available() >= 12) {
-        // note that the tmElements_t Year member is an offset from 1970,
-        // but the RTC wants the last two digits of the calendar year.
-        // use the convenience macros from the Time Library to do the conversions.
-        int y = Serial.parseInt();
-        if (y >= 100 && y < 1000)
-            Serial << F("Error: Year must be two digits or four digits!") << endl;
-        else {
-            if (y >= 1000)
-                tm.Year = CalendarYrToTm(y);
-            else    // (y < 100)
-                tm.Year = y2kYearToTm(y);
-            tm.Month = Serial.parseInt();
-            tm.Day = Serial.parseInt();
-            tm.Hour = Serial.parseInt();
-            tm.Minute = Serial.parseInt();
-            tm.Second = Serial.parseInt();
-            time_t t = makeTime(tm);
-            RTC.set(t);        // use the time_t value to ensure correct weekday is set
-            setTime(t);
-            Serial << F("RTC set to: ");
-            printDateTime(t);
-            Serial << endl;
-            // dump any extraneous input
-            while (Serial.available() > 0) Serial.read();
-         }
-    }
 }
 
 void printTimeToSerial()
@@ -355,12 +306,6 @@ void printTimeToSerial()
     if (t != tLast) {
         tLast = t;
         printDateTime(t);
-        #ifdef def_printTemperature
-            if (second(t) == 0) {
-                float c = RTC.temperature() / 4.;
-                Serial << F("  ") << c << F(" C  ");
-            }
-        #endif
         Serial << endl;
     }
 }
