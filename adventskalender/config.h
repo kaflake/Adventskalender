@@ -8,11 +8,14 @@
 #define def_printTime // print time while on loop
 #define def_testLed
 
+#define MP3_SERIAL_RX 3
+#define MP3_SERIAL_TX 2
+#define MP3_BUSY 4
+
 #define CONTROL_BUTTON_PIN A0
 #define CHRISTMAS_BUTTON_PIN 4
-#define CHRISTMAS_LED 12
-#define MP3_SERIAL_RX 2
-#define MP3_SERIAL_TX 3
+
+#define LED_STRIPE_PIN 12
 // LED_BUILTIN is pin 13 to test
 
 #define DAY_TRACK_START 1 // 24 daytracks needed

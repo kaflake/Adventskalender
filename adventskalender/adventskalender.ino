@@ -58,7 +58,7 @@ void initMp3()
 
 void initIos()
 {
-    pinMode(CHRISTMAS_LED, OUTPUT);
+    pinMode(LED_STRIPE_PIN, OUTPUT);
     controlButton.begin();
     christmasButton.begin();
 
@@ -96,6 +96,8 @@ void loop()
     christmasDoorLoop();
     happyNewYearLoop();
     kuckucksUhrLoop();
+
+    deactivateClockAndNewYearsLedAfterAMinute();
 }
 
 void readButtonsLoop() 
@@ -162,12 +164,12 @@ void playChristmasTrack()
 
 void activateChristmasLed()
 {
-    digitalWrite(CHRISTMAS_LED, HIGH);
+    // TODO WS2812FX segement 1, auf fireflicker
 }
 
 void deactivateChristmasLed()
 {
-    digitalWrite(CHRISTMAS_LED, LOW);
+    // TODO WS2812FX segment 1 (bzw. alle aus)
 }
 
 void happyNewYearLoop() 
@@ -175,6 +177,7 @@ void happyNewYearLoop()
     int newYearTrack = getNewYearTrack(); // ggf get newyear oder kuckuck track. ziel: net nochmal now auslösen, das immer nur einmal. ggf. now auch speichern.
     if(newYearTrack > 0) {
         setLastClockTime();
+        activateNewYearsLed();
         playAdvertisementTrack(newYearTrack);
     }
 }
@@ -194,6 +197,12 @@ int getNewYearTrack()
     }
 
     return -1;
+}
+
+
+void activateNewYearsLed() 
+{
+    // activate segment 2 mit firework
 }
 
 void kuckucksUhrLoop() 
@@ -216,6 +225,19 @@ void playMp3Track(int track)
     // TODO auch testen ob schon gespielt wird, dann ignoriere das
     Serial << 'Play MP3Track ' << track << endl;
     mp3.playMp3FolderTrack(track);
+}
+
+void activateKuckucksuhrLed() 
+{
+    // activate segment 2 mit christmas
+}
+
+void deactivateClockAndNewYearsLedAfterAMinute()
+{
+    if(minute(actualTime) != minute(lastClockTime))
+    {
+        // deactivate segment 2
+    }
 }
 
 void playAdvertisementTrack(int track) 
