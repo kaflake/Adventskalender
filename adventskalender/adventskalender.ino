@@ -23,29 +23,7 @@
 
 #include "general.h"
 #include "config.h"
-//#include "Mp3Notify.h"
-class Mp3Notify {
-public:
-  static void OnError(uint16_t errorCode) {
-    // see DfMp3_Error for code meaning
-    Serial.println();
-    Serial.print("Com Error ");
-    Serial.println(errorCode);
-  }
-  static void OnPlayFinished(uint16_t track) {
-    Serial.print("Track beendet");
-    Serial.println(track);
-  }
-  static void OnCardOnline(uint16_t code) {
-    Serial.println(F("SD Karte online "));
-  }
-  static void OnCardInserted(uint16_t code) {
-    Serial.println(F("SD Karte bereit "));
-  }
-  static void OnCardRemoved(uint16_t code) {
-    Serial.println(F("SD Karte entfernt "));
-  }
-};
+#include "Mp3Notify.h"
 
 SoftwareSerial mp3SoftwareSerial(MP3_SERIAL_RX, MP3_SERIAL_TX);
 static DFMiniMp3<SoftwareSerial, Mp3Notify> mp3(mp3SoftwareSerial);
