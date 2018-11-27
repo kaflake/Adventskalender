@@ -7,7 +7,6 @@ struct NewYearTrack
     byte Day;
     byte Hour;
     byte Minute;
-    byte Track; // music track to play
 };
 
 #endif

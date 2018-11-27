@@ -26,6 +26,7 @@ void setup()
     initIos();
     initMp3();
     initLedStrip();
+    printTimeToSerial();
 }
 
 void initRtc() 
@@ -63,8 +64,30 @@ void initLedStrip()
     ws2812fx.setBrightness(255);
 }
 
+
+
 void loop()
-{
+{  
+    // als extra funktion braucht es mehr speicherplatz und ging net
+    // input: yy,m,d,h,m,s, letztes komma sorgt dafür dass es gleich übernommen wird
+    if (Serial.available() >= 12) 
+    {
+      time_t t;
+      tmElements_t tm;
+      int y = Serial.parseInt();
+      tm.Year = y2kYearToTm(y);
+      tm.Month = Serial.parseInt();
+      tm.Day = Serial.parseInt();
+      tm.Hour = Serial.parseInt();
+      tm.Minute = Serial.parseInt();
+      tm.Second = Serial.parseInt();
+      t = makeTime(tm);
+      RTC.set(t);        // use the time_t value to ensure correct weekday is set
+      setTime(t);
+      printTimeToSerial();
+
+      while (Serial.available() > 0) Serial.read();
+    }
     actualTime = now;
     mp3.loop(); 
 
@@ -96,7 +119,6 @@ void loop()
 
     deactivateClockAndNewYearsLedAfterAMinute();
 }
-
 void readButtonsLoop() 
 {
     controlButton.read();
@@ -130,9 +152,7 @@ void christmasDoorLoop()
     if(christmasButton.pressedFor(DOOR_REACTION_TIME)) // reed is open for LONG_PRESS time
     {
         onChristmasDoorOpend(); 
-    }
-
-    if(christmasButton.pressedFor(DOOR_REACTION_TIME))
+    } else if(christmasButton.releasedFor(DOOR_REACTION_TIME))
     {
         onChristmasDoorClosed();
     }
@@ -151,12 +171,11 @@ void onChristmasDoorClosed()
 
 void playChristmasTrack()
 {
-    if(month() == 12 && day() >= 24 || month() == 1 && day() <= 6) // es ist weihnachten oder danach soll es noch gehen bis 3 König
+    if((month() == 12 && day() >= 24) || (month() == 1 && day() <= 6)) // es ist weihnachten oder danach soll es noch gehen bis 3 König
     {        
         playMp3Track(CHRISTMAS_TRACK);
     } else {
         playMp3Track(NOTALLOWED_TRACK);
-        //Serial << 'Spiele: heut ist aber nicht weihnachten mach das schnell wieder zu' << endl;
     }
 }
 
@@ -194,13 +213,12 @@ void happyNewYearLoop()
 // -1 if not, else return the track
 int getNewYearTrack() 
 {
-    if((day(actualTime) == 31 && month(actualTime) == 12 || day(actualTime) == 1 && month(actualTime) == 1) &&
+    if(((day(actualTime) == 31 && month(actualTime) == 12) || (day(actualTime) == 1 && month(actualTime) == 1)) &&
         (minute(actualTime) == 0 || minute(actualTime) == 15 || minute(actualTime) == 30)) // only at this minutes its possible new year
     {
         int arraySize = sizeof(newYearTrackList) / sizeof(newYearTrackList[0]);
         for (int i = 0; i < arraySize; i++)
         {
-            // return newYearTrackList[i].Track;
             return NEWYEAR_TRACKS_START + i;
         }
     }
@@ -278,14 +296,13 @@ void playAdvertisementTrack(int track)
     }
     else
     {
-        Serial << 'Is not playing -> No Advertisment needed' << endl;
+        //Serial << 'Is not playing -> No Advertisment needed' << endl;
         playMp3Track(track);
     }
 }
 
 void playMp3Track(int track) 
 {
-    // TODO auch testen ob schon gespielt wird, dann ignoriere das
     //Serial << 'Play MP3Track ' << track << endl;
     mp3.playMp3FolderTrack(track);
 }
@@ -299,47 +316,6 @@ bool isPlaying()
 
 void printTimeToSerial()
 {
-    // only print time once, only print again if changed (new second)
-    static time_t tLast;
-    time_t t;
-    t = now();
-    if (t != tLast) {
-        tLast = t;
-        printDateTime(t);
-        Serial << endl;
-    }
-}
-
-// print date and time to Serial
-void printDateTime(time_t t)
-{
-    printDate(t);
-    Serial << ' ';
-    printTime(t);
-}
-
-// print time to Serial
-void printTime(time_t t)
-{
-    printI00(hour(t), ':');
-    printI00(minute(t), ':');
-    printI00(second(t), ' ');
-}
-
-// print date to Serial
-void printDate(time_t t)
-{
-    printI00(day(t), 0);
-    Serial << monthShortStr(month(t)) << _DEC(year(t));
-}
-
-// Print an integer in "00" format (with leading zero),
-// followed by a delimiter character to Serial.
-// Input value assumed to be between 0 and 99.
-void printI00(int val, char delim)
-{
-    if (val < 10) Serial << '0';
-    Serial << _DEC(val);
-    if (delim > 0) Serial << delim;
-    return;
+  Serial.print("Time in MS since 1970 (https://currentmillis.com/): ");
+  Serial.println(now());
 }
