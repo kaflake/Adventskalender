@@ -70,7 +70,7 @@ void loop()
 {  
     // als extra funktion braucht es mehr speicherplatz und ging net
     // input: yy,m,d,h,m,s, letztes komma sorgt dafür dass es gleich übernommen wird
-    if (Serial.available() >= 12) 
+    /*if (Serial.available() >= 12) 
     {
       time_t t;
       tmElements_t tm;
@@ -87,7 +87,7 @@ void loop()
       printTimeToSerial();
 
       while (Serial.available() > 0) Serial.read();
-    }
+    }*/
     actualTime = now;
     mp3.loop(); 
 
@@ -316,6 +316,24 @@ bool isPlaying()
 
 void printTimeToSerial()
 {
-  Serial.print("Time in MS since 1970 (https://currentmillis.com/): ");
-  Serial.println(now());
+    // digital clock display of the time
+    Serial.print(hour());
+    printDigits(minute());
+    printDigits(second());
+    Serial.print(' ');
+    Serial.print(day());
+    Serial.print('.');
+    Serial.print(month());
+    Serial.print('.');
+    Serial.print(year());
+    Serial.println();
+}
+
+void printDigits(int digits)
+{
+    // utility function for digital clock display: prints preceding colon and leading 0
+    Serial.print(':');
+    if(digits < 10)
+        Serial.print('0');
+    Serial.print(digits);
 }
