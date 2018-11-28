@@ -326,6 +326,12 @@ bool isPlaying()
 
 void printTimeToSerial()
 {
+  static time_t tLast;
+  time_t t = now();
+  if (t != tLast) 
+  {
+    tLast = t;
+  
     // digital clock display of the time
     Serial.print(hour());
     printDigits(minute());
@@ -337,6 +343,7 @@ void printTimeToSerial()
     Serial.print('.');
     Serial.print(year());
     Serial.println();
+  }
 }
 
 void printDigits(int digits)
