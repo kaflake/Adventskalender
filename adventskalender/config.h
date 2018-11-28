@@ -8,8 +8,8 @@
 //#define def_testLed
 //#define def_setTime
 
-#define MP3_SERIAL_RX 3
-#define MP3_SERIAL_TX 2
+#define MP3_SERIAL_RX 2
+#define MP3_SERIAL_TX 3
 #define MP3_BUSY_PIN 4
 #define CONTROL_BUTTON_PIN 5
 #define CHRISTMAS_BUTTON_PIN 6

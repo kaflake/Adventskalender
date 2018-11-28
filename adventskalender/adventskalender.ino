@@ -18,6 +18,7 @@ Button christmasButton(CHRISTMAS_BUTTON_PIN);
 static time_t actualTime;
 static time_t lastClockTime;
 static bool clockLedActive = true;
+static bool doorLastClosed = false; // startet quasi als offen dadurch reagiert es aufs erste öffnen nicht
 
 void setup()
 {
@@ -94,7 +95,7 @@ void loop()
 
 void defaultLoop()
 {
-  actualTime = now;
+  actualTime = now();
   readButtonsLoop();
   mp3.loop(); 
   controlButtonLoop();
@@ -146,6 +147,7 @@ void controlButtonLoop()
 void playTrackOfTheDay() 
 {
     int actualDay = day();
+
     if(month() == 12 && actualDay <= 24)
     {
         int dayTrackIndex = actualDay - 1;
@@ -159,12 +161,14 @@ void playTrackOfTheDay()
 
 void christmasDoorLoop()
 {
-    if(christmasButton.pressedFor(DOOR_REACTION_TIME)) // reed is open for LONG_PRESS time
+    if(christmasButton.releasedFor(DOOR_REACTION_TIME) && doorLastClosed) // reed is open for LONG_PRESS time
     {
-        onChristmasDoorOpend(); 
-    } else if(christmasButton.releasedFor(DOOR_REACTION_TIME))
+        onChristmasDoorOpend();
+        doorLastClosed = false;
+    } else if(christmasButton.pressedFor(DOOR_REACTION_TIME) && !doorLastClosed)
     {
         onChristmasDoorClosed();
+        doorLastClosed = true;
     }
 }
 
@@ -212,11 +216,14 @@ void deactivateChristmasLed()
 
 void happyNewYearLoop() 
 {
-    int newYearTrack = getNewYearTrack(); // ggf get newyear oder kuckuck track. ziel: net nochmal now auslösen, das immer nur einmal. ggf. now auch speichern.
-    if(newYearTrack > 0) {
-        setLastClockTime();
-        activateNewYearsLed();
-        playAdvertisementTrack(newYearTrack);
+    if(minute(actualTime) != minute(lastClockTime) || hour(actualTime) != hour(lastClockTime))
+    {
+      int newYearTrack = getNewYearTrack(); // ggf get newyear oder kuckuck track. ziel: net nochmal now auslösen, das immer nur einmal. ggf. now auch speichern.
+      if(newYearTrack > 0) {
+          setLastClockTime();
+          activateNewYearsLed();
+          playAdvertisementTrack(newYearTrack);
+      }
     }
 }
 
@@ -229,7 +236,10 @@ int getNewYearTrack()
         int arraySize = sizeof(newYearTrackList) / sizeof(newYearTrackList[0]);
         for (int i = 0; i < arraySize; i++)
         {
-            return NEWYEAR_TRACKS_START + i;
+            if(newYearTrackList[i].Day == day(actualTime) && newYearTrackList[i].Hour == hour(actualTime) && newYearTrackList[i].Minute == minute(actualTime))
+            {
+              return NEWYEAR_TRACKS_START + i;
+            }
         }
     }
 
