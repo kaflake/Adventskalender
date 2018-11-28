@@ -13,7 +13,7 @@ SoftwareSerial mp3SoftwareSerial(MP3_SERIAL_RX, MP3_SERIAL_TX);
 static DFMiniMp3<SoftwareSerial, Mp3Notify> mp3(mp3SoftwareSerial);
 WS2812FX ws2812fx = WS2812FX(LED_STRIPE_COUNT, LED_STRIPE_PIN, NEO_GRB + NEO_KHZ800);
 Button controlButton(CONTROL_BUTTON_PIN);
-Button christmasButton(CHRISTMAS_BUTTON_PIN);
+Button christmasButton(CHRISTMAS_BUTTON_PIN, 25, true, false);
 
 static time_t actualTime;
 static time_t lastClockTime;
@@ -161,11 +161,11 @@ void playTrackOfTheDay()
 
 void christmasDoorLoop()
 {
-    if(christmasButton.releasedFor(DOOR_REACTION_TIME) && doorLastClosed) // reed is open for LONG_PRESS time
+    if(christmasButton.pressedFor(DOOR_REACTION_TIME) && doorLastClosed) // reed is open for LONG_PRESS time
     {
         onChristmasDoorOpend();
         doorLastClosed = false;
-    } else if(christmasButton.pressedFor(DOOR_REACTION_TIME) && !doorLastClosed)
+    } else if(christmasButton.releasedFor(DOOR_REACTION_TIME) && !doorLastClosed)
     {
         onChristmasDoorClosed();
         doorLastClosed = true;
