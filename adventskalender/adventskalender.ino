@@ -98,6 +98,7 @@ void defaultLoop()
   actualTime = now();
   readButtonsLoop();
   mp3.loop(); 
+  ws2812fx.service();
   controlButtonLoop();
   christmasDoorLoop();
   happyNewYearLoop();
@@ -343,24 +344,25 @@ void printTimeToSerial()
     tLast = t;
   
     // digital clock display of the time
-    Serial.print(hour());
+    //Serial.print(hour());
+    printDigits(hour());
     printDigits(minute());
-    printDigits(second());
-    Serial.print(' ');
-    Serial.print(day());
-    Serial.print('.');
-    Serial.print(month());
-    Serial.print('.');
-    Serial.print(year());
-    Serial.println();
+    //printDigits(second());
+    //Serial.print(' ');
+    //Serial.print(day());
+    //Serial.print('.');
+    //Serial.print(month());
+    //Serial.print('.');
+    //Serial.print(year());
+    //Serial.println();
   }
 }
 
 void printDigits(int digits)
 {
     // utility function for digital clock display: prints preceding colon and leading 0
-    Serial.print(':');
-    if(digits < 10)
-        Serial.print('0');
+    //Serial.print(':');
+    //if(digits < 10)
+    //    Serial.print('0');
     Serial.print(digits);
 }
