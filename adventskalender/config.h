@@ -13,7 +13,7 @@
 #define MP3_BUSY_PIN 4
 #define CONTROL_BUTTON_PIN 5
 #define CHRISTMAS_BUTTON_PIN 6
-#define LED_STRIPE_PIN 12
+#define LED_STRIPE_PIN 7
 // Uhr an I2C -> SCL auf A5 - SDA auf A4
 // LED_BUILTIN is pin 13 to test
 
