@@ -4,8 +4,9 @@
 #include "Arduino.h"
 #include "general.h"
 
-//#define def_printTime // print time while on loop
+#define def_printTimeLoop // print time while on loop
 //#define def_testLed
+//#define def_setTime
 
 #define MP3_SERIAL_RX 3
 #define MP3_SERIAL_TX 2
@@ -13,6 +14,8 @@
 #define CONTROL_BUTTON_PIN 5
 #define CHRISTMAS_BUTTON_PIN 6
 #define LED_STRIPE_PIN 12
+// Uhr an I2C -> SCL auf A5 - SDA auf A4
+// LED_BUILTIN is pin 13 to test
 
 #define LED_STRIPE_COUNT 30
 #define LED_STRIPE_CHRISTMAS_SEGMENT 0
@@ -21,14 +24,13 @@
 #define LED_STRIPE_TREE_SEGMENT 1
 #define LED_STRIPE_TREE_SEGMENT_START 6
 #define LED_STRIPE_TREE_SEGMENT_COUNT 24 // das an der spitze
-// LED_BUILTIN is pin 13 to test
 
 #define DAY_TRACK_START 1 // 24 daytracks needed
 #define OHTANNENBAUM_TRACK 25
 #define CLOCK_TRACK 26 // kuckucksuhr z.B.
 #define CHRISTMAS_TRACK 27
 #define NOTALLOWED_TRACK 28 // shame on you z.b.
-#define NEWYEAR_TRACKS_START 29
+#define NEWYEAR_TRACKS_START 29 // -> bis 66
 
 const unsigned long DOOR_REACTION_TIME(500); // ms die der schalte braucht bis er die tür als geschlossen oder offen definiert
 

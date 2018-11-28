@@ -64,61 +64,71 @@ void initLedStrip()
     ws2812fx.setBrightness(255);
 }
 
-
-
 void loop()
-{  
-    // als extra funktion braucht es mehr speicherplatz und ging net
-    // input: yy,m,d,h,m,s, letztes komma sorgt dafür dass es gleich übernommen wird
-    /*if (Serial.available() >= 12) 
-    {
-      time_t t;
-      tmElements_t tm;
-      int y = Serial.parseInt();
-      tm.Year = y2kYearToTm(y);
-      tm.Month = Serial.parseInt();
-      tm.Day = Serial.parseInt();
-      tm.Hour = Serial.parseInt();
-      tm.Minute = Serial.parseInt();
-      tm.Second = Serial.parseInt();
-      t = makeTime(tm);
-      RTC.set(t);        // use the time_t value to ensure correct weekday is set
-      setTime(t);
-      printTimeToSerial();
-
-      while (Serial.available() > 0) Serial.read();
-    }*/
-    actualTime = now;
-    mp3.loop(); 
-
+{      
+    #ifdef def_setTime
     // if serial input set it as time
     // für setrtc reicht der speicherplatz nicht mehr. zum setzen der zeit ein extra sketch benutzen (in der DS3232RTC lib in den beispielen vorhanden)
-    // setRtcFromSerialLoop();
-
-    #ifdef def_printTime
-        printTimeToSerial();
+    setRtcFromSerialLoop();    
     #endif
 
-    readButtonsLoop();
-    controlButtonLoop();
+    #ifdef def_printTimeLoop
+    printTimeToSerial();
+    #endif
+
+    #ifndef def_setTime
+    defaultLoop();
 
     #ifdef def_testLed
-        if(christmasButton.wasReleased())
-        {
-            digitalWrite(LED_BUILTIN, true);
-        }
-        else
-        {
-            digitalWrite(LED_BUILTIN, false);    
-        }
+    if(christmasButton.wasReleased())
+    {
+        digitalWrite(LED_BUILTIN, true);
+    }
+    else
+    {
+        digitalWrite(LED_BUILTIN, false);    
+    }
     #endif
-
-    christmasDoorLoop();
-    happyNewYearLoop();
-    kuckucksUhrLoop();
-
-    deactivateClockAndNewYearsLedAfterAMinute();
+    #endif
 }
+
+void defaultLoop()
+{
+  actualTime = now;
+  readButtonsLoop();
+  mp3.loop(); 
+  controlButtonLoop();
+  christmasDoorLoop();
+  happyNewYearLoop();
+  kuckucksUhrLoop();
+
+  deactivateClockAndNewYearsLedAfterAMinute();
+}
+
+void setRtcFromSerialLoop()
+{
+  // als extra funktion braucht es mehr speicherplatz und ging net
+  // input: yy,m,d,h,m,s, letztes komma sorgt dafür dass es gleich übernommen wird
+  if (Serial.available() >= 12) 
+  {
+    time_t t;
+    tmElements_t tm;
+    int y = Serial.parseInt();
+    tm.Year = y2kYearToTm(y);
+    tm.Month = Serial.parseInt();
+    tm.Day = Serial.parseInt();
+    tm.Hour = Serial.parseInt();
+    tm.Minute = Serial.parseInt();
+    tm.Second = Serial.parseInt();
+    t = makeTime(tm);
+    RTC.set(t);        // use the time_t value to ensure correct weekday is set
+    setTime(t);
+    printTimeToSerial();
+
+    while (Serial.available() > 0) Serial.read();
+  }
+}
+
 void readButtonsLoop() 
 {
     controlButton.read();
