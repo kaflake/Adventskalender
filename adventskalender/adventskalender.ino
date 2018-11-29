@@ -297,15 +297,12 @@ void activateKuckucksuhrLed()
 }
 
 void deactivateClockAndNewYearsLedAfterAMinute()
-{
-    if(clockLedActive)
+{ 
+    if(clockLedActive && second(actualTime) > 30)
     {
-        if(minute(actualTime) != minute(lastClockTime))
-        {
-            ws2812fx.stop();
-            clockLedActive = false;
-        }
-    }
+        ws2812fx.stop();
+        clockLedActive = false;
+    }    
 }
 
 void playAdvertisementTrack(int track) 
