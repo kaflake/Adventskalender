@@ -35,9 +35,11 @@ void initRtc()
     // setSyncProvider() causes the Time library to synchronize with the
     // external RTC by calling RTC.get() every five minutes by default.
     setSyncProvider(RTC.get);
-    Serial << "RTC Sync";
-    if (timeStatus() != timeSet) Serial << " FAIL!";
-    Serial << endl;
+    if (timeStatus() != timeSet) 
+    {
+      //Serial << "RTC Sync FAIL!" << endl;
+      Serial.println("RTC Sync FAIL");
+    }
 }
 
 void initMp3() 
@@ -342,24 +344,23 @@ void printTimeToSerial()
   
     // digital clock display of the time
     //Serial.print(hour());
-    printDigits(hour());
-    printDigits(minute());
-    //printDigits(second());
-    //Serial.print(' ');
-    //Serial.print(day());
-    //Serial.print('.');
-    //Serial.print(month());
-    //Serial.print('.');
-    //Serial.print(year());
-    //Serial.println();
+    printNumber(hour());
+    printColon();
+    printNumber(minute());
+    printColon();
+    printNumber(second());
+    Serial << endl;
   }
 }
 
-void printDigits(int digits)
+// spart speicher in extra funktion
+void printColon()
 {
-    // utility function for digital clock display: prints preceding colon and leading 0
-    //Serial.print(':');
-    //if(digits < 10)
-    //    Serial.print('0');
-    Serial.print(digits);
+  Serial << ":";
+}
+
+// spart speicher in extra funktion
+void printNumber(int number)
+{
+    Serial << number;    
 }
