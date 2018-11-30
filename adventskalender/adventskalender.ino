@@ -65,6 +65,10 @@ void initLedStrip()
 {
     ws2812fx.init();
     ws2812fx.setBrightness(255);
+
+    
+    deactivateChristmasLed();
+    ws2812fx.start();
 }
 
 void loop()
@@ -160,6 +164,8 @@ void playTrackOfTheDay()
     {
         playMp3Track(OHTANNENBAUM_TRACK);
     }
+
+    activateTreeLed();
 }
 
 void christmasDoorLoop()
@@ -200,21 +206,24 @@ void activateChristmasLed()
 {
     // ws2812fx.setBrightness(255);
     // parameters: index, start, stop, mode, color, speed, reverse
-    ws2812fx.setSegment(LED_STRIPE_TREE_SEGMENT,  
+    ws2812fx.setSegment(LED_STRIPE_CHRISTMAS_SEGMENT,  
     LED_STRIPE_CHRISTMAS_SEGMENT_START, 
     LED_STRIPE_CHRISTMAS_SEGMENT_START + LED_STRIPE_CHRISTMAS_SEGMENT_COUNT - 1, 
     FX_MODE_FIRE_FLICKER,
     RED,
     1000,
     false);
-
-    ws2812fx.start();
 }
 
 void deactivateChristmasLed()
 {
-    // alway deactivate all
-    ws2812fx.stop();
+    ws2812fx.setSegment(LED_STRIPE_CHRISTMAS_SEGMENT,  
+    LED_STRIPE_CHRISTMAS_SEGMENT_START, 
+    LED_STRIPE_CHRISTMAS_SEGMENT_START + LED_STRIPE_CHRISTMAS_SEGMENT_COUNT - 1, 
+    FX_MODE_STATIC,
+    BLACK,
+    1000,
+    false);
 }
 
 void happyNewYearLoop() 
@@ -249,21 +258,17 @@ int getNewYearTrack()
     return -1;
 }
 
-
 void activateNewYearsLed() 
 {
     clockLedActive = true;
-    // ws2812fx.setBrightness(255);
     // parameters: index, start, stop, mode, color, speed, reverse
     ws2812fx.setSegment(LED_STRIPE_TREE_SEGMENT,  
-    LED_STRIPE_TREE_SEGMENT_START, 
-    LED_STRIPE_TREE_SEGMENT_START + LED_STRIPE_TREE_SEGMENT_COUNT - 1, 
-    FX_MODE_FIREWORKS_RANDOM,
-    RED,
-    1000,
-    false);
-
-    ws2812fx.start();
+      LED_STRIPE_TREE_SEGMENT_START, 
+      LED_STRIPE_TREE_SEGMENT_START + LED_STRIPE_TREE_SEGMENT_COUNT - 1, 
+      FX_MODE_FIREWORKS_RANDOM,
+      RED,
+      1000,
+      false);
 }
 
 void kuckucksUhrLoop() 
@@ -273,7 +278,7 @@ void kuckucksUhrLoop()
     {
         setLastClockTime();
         playAdvertisementTrack(CLOCK_TRACK);
-        activateKuckucksuhrLed();        
+        activateTreeLed();        
     }
 }
 
@@ -282,27 +287,31 @@ void setLastClockTime()
     lastClockTime = actualTime;
 }
 
-void activateKuckucksuhrLed() 
+void activateTreeLed() 
 {
     clockLedActive = true;
     // ws2812fx.setBrightness(255);
     // parameters: index, start, stop, mode, color, speed, reverse
     ws2812fx.setSegment(LED_STRIPE_TREE_SEGMENT,  
-    LED_STRIPE_TREE_SEGMENT_START, 
-    LED_STRIPE_TREE_SEGMENT_START + LED_STRIPE_TREE_SEGMENT_COUNT - 1, 
-    FX_MODE_MERRY_CHRISTMAS,
-    RED,
-    1000,
-    false);
-
-    ws2812fx.start();
+      LED_STRIPE_TREE_SEGMENT_START, 
+      LED_STRIPE_TREE_SEGMENT_START + LED_STRIPE_TREE_SEGMENT_COUNT - 1, 
+      FX_MODE_MERRY_CHRISTMAS,
+      RED,
+      1000,
+      false);
 }
 
 void deactivateClockAndNewYearsLedAfterAMinute()
 { 
-    if(clockLedActive && second(actualTime) > 30)
+    if(!isPlaying() && clockLedActive && second(actualTime) > 30)
     {
-        ws2812fx.stop();
+        ws2812fx.setSegment(LED_STRIPE_TREE_SEGMENT,  
+          LED_STRIPE_TREE_SEGMENT_START, 
+          LED_STRIPE_TREE_SEGMENT_START + LED_STRIPE_TREE_SEGMENT_COUNT - 1, 
+          FX_MODE_STATIC,
+          BLACK,
+          1000,
+          false);
         clockLedActive = false;
     }    
 }
