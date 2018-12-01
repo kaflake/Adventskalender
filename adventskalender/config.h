@@ -17,6 +17,8 @@
 // Uhr an I2C -> SCL auf A5 - SDA auf A4
 // LED_BUILTIN is pin 13 to test
 
+#define VOLUME 25
+
 #define LED_STRIPE_COUNT 30
 #define LED_STRIPE_CHRISTMAS_SEGMENT 0
 #define LED_STRIPE_CHRISTMAS_SEGMENT_START 0

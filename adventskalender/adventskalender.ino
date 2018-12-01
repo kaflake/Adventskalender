@@ -45,7 +45,7 @@ void initRtc()
 void initMp3() 
 {
     mp3.begin();
-    mp3.setVolume(20);
+    mp3.setVolume(VOLUME);
 }
 
 void initIos()
@@ -210,7 +210,7 @@ void activateChristmasLed()
     LED_STRIPE_CHRISTMAS_SEGMENT_START, 
     LED_STRIPE_CHRISTMAS_SEGMENT_START + LED_STRIPE_CHRISTMAS_SEGMENT_COUNT - 1, 
     FX_MODE_FIRE_FLICKER,
-    RED,
+    ORANGE,
     1000,
     false);
 }
