@@ -338,8 +338,6 @@ void playMp3Track(int track)
 
 bool isPlaying() 
 {
-    // kann etwas dauern bis busy erscheint, deshalb davor ein delay
-    delay(500);
     return !digitalRead(MP3_BUSY_PIN);
 }
 
