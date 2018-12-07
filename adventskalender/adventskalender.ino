@@ -17,7 +17,8 @@ Button christmasButton(CHRISTMAS_BUTTON_PIN, 25, true, false);
 
 static time_t actualTime;
 static time_t lastClockTime;
-static bool clockLedActive = true;
+static unsigned long treeLedStartTime = 0;
+static bool treeLedActive = true;
 static bool doorLastClosed = false; // startet quasi als offen dadurch reagiert es aufs erste öffnen nicht
 
 void setup()
@@ -110,7 +111,7 @@ void defaultLoop()
   happyNewYearLoop();
   kuckucksUhrLoop();
 
-  deactivateClockAndNewYearsLedAfterAMinute();
+  deactivateTreeLedAfterRunOut();
 }
 
 void setRtcFromSerialLoop()
@@ -165,7 +166,7 @@ void playTrackOfTheDay()
         playMp3Track(OHTANNENBAUM_TRACK);
     }
 
-    activateTreeLed();
+    activateChristmasTreeLed();
 }
 
 void christmasDoorLoop()
@@ -233,7 +234,7 @@ void happyNewYearLoop()
       int newYearTrack = getNewYearTrack(); // ggf get newyear oder kuckuck track. ziel: net nochmal now auslösen, das immer nur einmal. ggf. now auch speichern.
       if(newYearTrack > 0) {
           setLastClockTime();
-          activateNewYearsLed();
+          activateNewYearTreeLed();
           playAdvertisementTrack(newYearTrack);
       }
     }
@@ -258,9 +259,9 @@ int getNewYearTrack()
     return -1;
 }
 
-void activateNewYearsLed() 
+void activateNewYearTreeLed() 
 {
-    clockLedActive = true;
+    setTreeLedActive();
     // parameters: index, start, stop, mode, color, speed, reverse
     ws2812fx.setSegment(LED_STRIPE_TREE_SEGMENT,  
       LED_STRIPE_TREE_SEGMENT_START, 
@@ -278,7 +279,7 @@ void kuckucksUhrLoop()
     {
         setLastClockTime();
         playAdvertisementTrack(CLOCK_TRACK);
-        activateTreeLed();        
+        activateChristmasTreeLed();        
     }
 }
 
@@ -287,9 +288,9 @@ void setLastClockTime()
     lastClockTime = actualTime;
 }
 
-void activateTreeLed() 
+void activateChristmasTreeLed() 
 {
-    clockLedActive = true;
+    setTreeLedActive();
     // ws2812fx.setBrightness(255);
     // parameters: index, start, stop, mode, color, speed, reverse
     ws2812fx.setSegment(LED_STRIPE_TREE_SEGMENT,  
@@ -301,9 +302,15 @@ void activateTreeLed()
       false);
 }
 
-void deactivateClockAndNewYearsLedAfterAMinute()
+void setTreeLedActive()
+{
+    treeLedActive = true;
+    treeLedStartTime = millis();
+}
+
+void deactivateTreeLedAfterRunOut()
 { 
-    if(!isPlaying() && clockLedActive && second(actualTime) > 30)
+    if(treeLedActive && treeLedStartTime < millis() - MIN_TREE_LED_TIME && !isPlaying())
     {
         ws2812fx.setSegment(LED_STRIPE_TREE_SEGMENT,  
           LED_STRIPE_TREE_SEGMENT_START, 
@@ -312,7 +319,7 @@ void deactivateClockAndNewYearsLedAfterAMinute()
           BLACK,
           1000,
           false);
-        clockLedActive = false;
+        treeLedActive = false;
     }    
 }
 

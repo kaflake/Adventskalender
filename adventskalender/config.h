@@ -18,6 +18,7 @@
 // LED_BUILTIN is pin 13 to test
 
 #define VOLUME 25
+#define MIN_TREE_LED_TIME 10000 // in ms
 
 #define LED_STRIPE_COUNT 30
 #define LED_STRIPE_CHRISTMAS_SEGMENT 0
