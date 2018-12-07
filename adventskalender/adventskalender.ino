@@ -310,7 +310,7 @@ void setTreeLedActive()
 
 void deactivateTreeLedAfterRunOut()
 { 
-    if(treeLedActive && treeLedStartTime < millis() - MIN_TREE_LED_TIME && !isPlaying())
+    if(treeLedActive && (treeLedStartTime < (millis() - MIN_TREE_LED_TIME)) && !isPlaying())
     {
         ws2812fx.setSegment(LED_STRIPE_TREE_SEGMENT,  
           LED_STRIPE_TREE_SEGMENT_START, 
