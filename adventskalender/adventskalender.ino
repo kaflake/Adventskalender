@@ -20,6 +20,7 @@ static time_t lastClockTime;
 static unsigned long treeLedStartTime = 0;
 static bool treeLedActive = true;
 static bool doorLastClosed = false; // startet quasi als offen dadurch reagiert es aufs erste öffnen nicht
+static int lastNewYearTrack = 0; // 0 no was played -> default on button push
 
 void setup()
 {
@@ -28,7 +29,7 @@ void setup()
     initIos();
     initMp3();
     initLedStrip();
-    printTimeToSerial();
+    // printTimeToSerial();
 }
 
 void initRtc() 
@@ -148,7 +149,13 @@ void controlButtonLoop()
 {
     if(controlButton.wasReleased())
     {
+      if(lastNewYearTrack > 0 && isNewYearDateArea()) {
+          playNewYear(lastNewYearTrack);
+      } 
+      else
+      {
         playTrackOfTheDay();
+      }
     }
 }
 
@@ -232,18 +239,24 @@ void happyNewYearLoop()
     if(minute(actualTime) != minute(lastClockTime) || hour(actualTime) != hour(lastClockTime))
     {
       int newYearTrack = getNewYearTrack(); // ggf get newyear oder kuckuck track. ziel: net nochmal now auslösen, das immer nur einmal. ggf. now auch speichern.
+      lastNewYearTrack = newYearTrack;
       if(newYearTrack > 0) {
           setLastClockTime();
-          activateNewYearTreeLed();
-          playAdvertisementTrack(newYearTrack);
+          playNewYear(newYearTrack);
       }
     }
+}
+
+void playNewYear(int newYearTrack)
+{
+  activateNewYearTreeLed();
+  playAdvertisementTrack(newYearTrack);
 }
 
 // -1 if not, else return the track
 int getNewYearTrack() 
 {
-    if(((day(actualTime) == 31 && month(actualTime) == 12) || (day(actualTime) == 1 && month(actualTime) == 1)) &&
+    if(isNewYearDateArea() &&
         (minute(actualTime) == 0 || minute(actualTime) == 15 || minute(actualTime) == 30)) // only at this minutes its possible new year
     {
         int arraySize = sizeof(newYearTrackList) / sizeof(newYearTrackList[0]);
@@ -257,6 +270,11 @@ int getNewYearTrack()
     }
 
     return -1;
+}
+
+bool isNewYearDateArea()
+{
+  return ((day(actualTime) == 31 && month(actualTime) == 12) || (day(actualTime) == 1 && month(actualTime) == 1));
 }
 
 void activateNewYearTreeLed() 

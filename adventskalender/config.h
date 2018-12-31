@@ -4,7 +4,7 @@
 #include "Arduino.h"
 #include "general.h"
 
-#define def_printTimeLoop // print time while on loop
+//#define def_printTimeLoop // print time while on loop
 //#define def_testLed
 //#define def_setTime
 
